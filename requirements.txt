@@ -1,0 +1,6 @@
+fastapi==0.115.6
+uvicorn==0.34.0
+python-multipart==0.0.9
+pymorphy3==2.0.6
+pymorphy3-dicts-ru==2.4.417150.4580142
+openpyxl==3.1.5
