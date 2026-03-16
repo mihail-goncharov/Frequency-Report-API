@@ -1,0 +1,47 @@
+from __future__ import annotations
+
+from collections import Counter, defaultdict
+from dataclasses import dataclass
+from typing import Iterable, List
+
+from app.domain.text_processing import Lemmatizer, tokenize
+
+
+@dataclass
+class ReportRaw:
+    lemma: str
+    total_count: int
+    per_line_counts: List[int]
+
+
+def build_report(lines: Iterable[str]) -> List[ReportRaw]:
+    lemmatizer = Lemmatizer()
+    total_counts: Counter[str] = Counter()
+    per_line_counts: defaultdict[str, List[int]] = defaultdict(list)
+
+    for line_index, line in enumerate(lines):
+        line_counter: Counter[str] = Counter()
+
+        for token in tokenize(line):
+            lemma = lemmatizer.lemma(token)
+            line_counter[lemma] += 1
+            total_counts[lemma] += 1
+
+        for lemma in total_counts.keys():
+            if len(per_line_counts[lemma]) <= line_index:
+                per_line_counts[lemma].append(0)
+
+        for lemma, count in line_counter.items():
+            per_line_counts[lemma][line_index] = count
+
+    rows = [
+        ReportRaw(
+            lemma=lemma,
+            total_count=total_counts[lemma],
+            per_line_counts=per_line_counts[lemma],
+        )
+        for lemma in sorted(total_counts.keys())
+    ]
+
+    return rows
+
