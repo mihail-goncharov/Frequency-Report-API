@@ -11,12 +11,12 @@ class Lemmatizer:
     def __init__(self) -> None:
         self._morph = pymorphy3.MorphAnalyzer()
 
-        @lru_cache(maxsize=100_000)
-        def lemma(self, word: str) -> str:
-            parsed = self._morph.parse(word)
-            if not parsed:
-                return word
-            return parsed[0].normal_form
+    @lru_cache(maxsize=100_000)
+    def lemma(self, word: str) -> str:
+        parsed = self._morph.parse(word)
+        if not parsed:
+            return word
+        return parsed[0].normal_form
 
 
 def tokenize(line: str) -> Iterable[str]:

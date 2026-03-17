@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, Request
 from fastapi.responses import FileResponse
 
 from app.infastructure.job_queue import JobQueue
@@ -12,12 +12,12 @@ from app.infastructure.job_store import JobStore, JobStatus
 router = APIRouter(prefix="/public/report", tags=["report"])
 
 
-def get_job_store() -> JobStore:
+def get_job_store(request: Request) -> JobStore:
     from main import app
     return app.state.job_store
 
 
-def get_job_queue() -> JobQueue:
+def get_job_queue(request: Request) -> JobQueue:
     from main import app
     return app.state.job_queue
 
@@ -50,7 +50,7 @@ async def export_report(
 
 
 @router.get("/status/{job_id}")
-def job_status(job_id: UUID, store: JobStore = Depends(get_job_store())):
+def job_status(job_id: UUID, store: JobStore = Depends(get_job_store)):
     job = store.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
@@ -58,7 +58,7 @@ def job_status(job_id: UUID, store: JobStore = Depends(get_job_store())):
 
 
 @router.get("/download/{job_id}")
-def download(job_id: UUID, store: JobStore = Depends(get_job_store())):
+def download(job_id: UUID, store: JobStore = Depends(get_job_store)):
     job = store.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")

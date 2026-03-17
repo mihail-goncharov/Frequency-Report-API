@@ -24,7 +24,7 @@ class JobQueue:
 
     async def stop_workers(self) -> None:
         # Send one sentinel per worker to stop them cleanly
-        for _ in self.workers:
+        for _ in self._workers:
             await self._queue.put(None)
         await asyncio.gather(*self._workers, return_exceptions=True)
 
