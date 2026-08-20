@@ -1,4 +1,4 @@
-# FastAPI Report Export
+# Frequency Report-API
 
 Service that accepts a text file, lemmatizes Russian words, and exports frequency statistics to XLSX.
 
